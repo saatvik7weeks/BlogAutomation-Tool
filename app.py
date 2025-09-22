@@ -1,28 +1,33 @@
 import streamlit as st
 import pandas as pd
 from openai import OpenAI
-from dotenv import load_dotenv
-import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import requests
-
-load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+import json
 
 st.set_page_config(page_title="Blog Tools", layout="wide")
 
+# Initialize OpenAI client from secrets
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+# Sidebar
 st.sidebar.title("Choose a Tool")
 tool = st.sidebar.radio("Select", ["Blog Clustering Tool", "Blog Outline Tool","Keyword Research Tool", "Blog Generation Tool"])
 
+# Google Sheets setup
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1LVX21MqSo2QQp_TQpQIRRoPj5F-RxPMzAimsuCMl7oc/edit#gid=783600968"
 SHEET_NAME = "Related Keywords"
 
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name(os.getenv("GOOGLE_SHEET_CREDS_JSON"), scope)
+
+# ✅ Load Google creds from Streamlit secrets
+gcp_creds = json.loads(st.secrets["GOOGLE_SHEET_CREDS_JSON"])
+creds = ServiceAccountCredentials.from_json_keyfile_dict(gcp_creds, scope)
 gc = gspread.authorize(creds)
 
 N8N_WEBHOOK_URL = "https://natasha1.app.n8n.cloud/webhook/5d1ae903-739c-43e5-88a1-9f0caec3bcf7"
+
 
 if tool == "Blog Clustering Tool":
     st.title("📊 Blog Clustering Tool")
