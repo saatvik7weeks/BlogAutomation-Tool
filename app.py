@@ -19,7 +19,7 @@ SHEET_NAME = "Related Keywords"
 
 # Google Sheets client from Streamlit secrets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-gcp_creds = json.loads(st.secrets["GOOGLE_SHEET_CREDS_JSON"])
+gcp_creds = st.secrets["GOOGLE_SHEET_CREDS_JSON"]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(gcp_creds, scope)
 gc = gspread.authorize(creds)
 
